@@ -238,9 +238,14 @@ const Checkout = () => {
           <input type="text" placeholder="Country" required value="India" disabled style={{ opacity: 0.7 }} />
           <div className="checkout-summary">
             <h4>Total to Pay: ₹{totalPrice.toFixed(2)}</h4>
-            <button type="submit" className="btn" disabled={isProcessing}>
-              {isProcessing ? 'Processing Payment...' : 'Pay Now'}
-            </button>
+            <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '15px' }}>
+              <button type="button" className="btn" style={{ background: '#3f3f46' }} onClick={bypassPayment} disabled={isProcessing}>
+                Bypass (Test)
+              </button>
+              <button type="submit" className="btn" disabled={isProcessing}>
+                {isProcessing ? 'Processing Payment...' : 'Pay Now'}
+              </button>
+            </div>
           </div>
         </form>
       </div>
