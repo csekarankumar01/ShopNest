@@ -54,11 +54,10 @@ const createOrder = async (req, res) => {
         
         const message = `Dear ${req.user.name},\n\nThank you for your order! We are excited to inform you that your order has been successfully created with the following details:\n\nOrder ID: ${order._id}\nTotal Amount: $${calculatedTotalAmount}\n\nBest Regards,\nShopNest Team`;
         
-        try {
-            await sendEmail(req.user.email, 'Order Created', message);
-        } catch (emailError) {
-            console.log("Email service skipped. Order saved successfully.");
-        }
+        // Send email asynchronously in the background to prevent blocking the response
+        sendEmail(req.user.email, 'Order Created', message).catch(err => {
+            console.error("Email service error:", err);
+        });
 
         res.status(201).json({ message: 'Order created successfully', order });
     } catch (error) {
