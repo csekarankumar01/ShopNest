@@ -11,6 +11,7 @@ const Register = () => {
   const [password, setPassword] = useState('');
   const [otp, setOtp] = useState('');
   const [step, setStep] = useState(1);
+  const [isProcessing, setIsProcessing] = useState(false);
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -23,6 +24,7 @@ const Register = () => {
 
   const handleRegister = async (e) => {
     e.preventDefault();
+    setIsProcessing(true);
     try {
       const res = await fetch(apiUrl('/api/auth/register'), {
         method: 'POST',
@@ -30,6 +32,7 @@ const Register = () => {
         body: JSON.stringify({ name, email, password })
       });
       const data = await res.json();
+      setIsProcessing(false);
       if (res.ok && data.requiresOtp) {
         alert(data.message);
         setStep(2);
@@ -43,6 +46,7 @@ const Register = () => {
 
   const handleVerify = async (e) => {
     e.preventDefault();
+    setIsProcessing(true);
     try {
       const res = await fetch(apiUrl('/api/auth/verify-otp'), {
         method: 'POST',
@@ -50,6 +54,7 @@ const Register = () => {
         body: JSON.stringify({ email, otp })
       });
       const data = await res.json();
+      setIsProcessing(false);
       if (res.ok) {
         alert('Email verified successfully!');
         login(data);
@@ -70,7 +75,7 @@ const Register = () => {
           <input type="text" placeholder="Full Name" value={name} onChange={(e) => setName(e.target.value)} required />
           <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
           <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-          <button type="submit" className="btn">Register</button>
+          <button type="submit" className="btn" disabled={isProcessing}>{isProcessing ? 'Registering...' : 'Register'}</button>
           <p>Already have an account? <Link to="/login">Login</Link></p>
         </form>
       ) : (
@@ -78,7 +83,7 @@ const Register = () => {
           <h2>Verify Email</h2>
           <p style={{ color: '#a1a1aa', marginBottom: '15px' }}>Enter the 6-digit OTP sent to {email}</p>
           <input type="text" placeholder="Enter OTP" value={otp} onChange={(e) => setOtp(e.target.value)} required maxLength="6" style={{ textAlign: 'center', letterSpacing: '4px', fontSize: '1.2rem' }} />
-          <button type="submit" className="btn">Verify & Login</button>
+          <button type="submit" className="btn" disabled={isProcessing}>{isProcessing ? 'Verifying...' : 'Verify & Login'}</button>
         </form>
       )}
     </div>

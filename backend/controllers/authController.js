@@ -27,12 +27,10 @@ const registerUser = async (req, res) => {
             Welcome to ShopNest, ${name}! Thank you for registering with us. We are excited to have you on board. To complete your registration, please use the following One-Time Password (OTP) for verification:
             Your OTP for ShopNest registration is: ${otp}`;
 
-            // Fixed: Wrapped in a try/catch so missing email credentials won't crash your whole registration
-            try {
-                await sendEmail(email, 'Welcome to ShopNest - Your OTP for Registration', message);
-            } catch (emailError) {
-                console.log("Email server skipped or unconfigured. Error:", emailError.message);
-            }
+            // Fixed: Send email asynchronously in the background so the UI doesn't hang
+            sendEmail(email, 'Welcome to ShopNest - Your OTP for Registration', message).catch(emailError => {
+                console.log("Email server error:", emailError.message);
+            });
 
             return res.status(201).json({ requiresOtp: true, email: user.email, message: 'OTP sent to email' });
         } else {
