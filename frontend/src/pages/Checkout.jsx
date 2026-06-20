@@ -58,7 +58,14 @@ const Checkout = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ amount: totalPrice })
       });
-      const orderData = await orderRes.json();
+      
+      let orderData;
+      try {
+        orderData = await orderRes.json();
+      } catch (err) {
+        setIsProcessing(false);
+        return alert("Failed to read server response. The backend might be unreachable or returned invalid data.");
+      }
 
       if (!orderRes.ok) {
         setIsProcessing(false);
@@ -159,6 +166,7 @@ const Checkout = () => {
     } catch (error) {
       console.error(error);
       setIsProcessing(false);
+      alert('Network or server error: ' + error.message);
     }
   };
 
@@ -188,6 +196,7 @@ const Checkout = () => {
     } catch (error) {
       console.error(error);
       setIsProcessing(false);
+      alert('Network or server error: ' + error.message);
     }
   };
 
