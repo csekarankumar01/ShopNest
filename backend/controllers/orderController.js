@@ -37,7 +37,7 @@ const createOrder = async (req, res) => {
                 fullName: req.user?.name || "Customer",
                 street: parts[0] || "Street Details Missing",
                 city: parts[1] || "City Missing",
-                postalCode: parts[2] || "Postal Code Missing",
+                state: parts[2] || "State Missing",
                 country: parts[3] || "India"
             };
         }
