@@ -19,9 +19,9 @@ services:
       - key: CLIENT_URLS
         sync: false
       - key: EMAIL_USER
-        sync: false
+        value: homelanderislive@gmail.com
       - key: EMAIL_PASS
-        sync: false
+        value: qkohsedvopeaeisq
       - key: CLOUDINARY_CLOUD_NAME
         sync: false
       - key: CLOUDINARY_API_KEY
