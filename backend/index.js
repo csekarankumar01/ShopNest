@@ -32,6 +32,31 @@ app.get("/", (req, res) => {
   res.send("ShopNest Backend is working properly!");
 });
 
+// Test email route
+app.get('/api/test-email', async (req, res) => {
+    try {
+        const nodemailer = require('nodemailer');
+        const emailUser = process.env.EMAIL_USER || 'homelanderislive@gmail.com';
+        const emailPass = process.env.EMAIL_PASS || 'qkohsedvopeaeisq';
+        
+        const transporter = nodemailer.createTransport({
+            service: 'Gmail',
+            auth: { user: emailUser, pass: emailPass }
+        });
+        
+        const info = await transporter.sendMail({
+            from: emailUser,
+            to: 'miet.karan.26@gmail.com',
+            subject: 'Test Email from Render',
+            text: 'If you receive this, emails are working.'
+        });
+        
+        res.json({ success: true, info, envUser: emailUser });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message, stack: error.stack });
+    }
+});
+
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/products', require('./routes/productRoutes'));
 app.use('/api/orders', require('./routes/orderRoutes'));
