@@ -139,7 +139,8 @@
   gap: 15px;
 }
 
-.shipping-form input {
+.shipping-form input,
+.shipping-form select {
   padding: 15px;
   background: #09090b;
   border: 1px solid #27272a;
@@ -149,7 +150,8 @@
   outline: none;
 }
 
-.shipping-form input:focus {
+.shipping-form input:focus,
+.shipping-form select:focus {
   border-color: #f97316;
 }
 
