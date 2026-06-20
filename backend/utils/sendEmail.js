@@ -1,31 +1,24 @@
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
+
+const resend = new Resend('re_as5pw2Kv_5sVnjjm1sHDkXjBogMkyXTa6');
 
 const sendEmail = async (to, subject, text) => {
     try {
-        const emailUser = process.env.EMAIL_USER || 'homelanderislive@gmail.com';
-        const emailPass = process.env.EMAIL_PASS || 'qkohsedvopeaeisq';
-
-        const transporter = nodemailer.createTransport({
-            host: 'smtp.gmail.com',
-            port: 587,
-            secure: false, // TLS
-            auth: {
-                user: emailUser,
-                pass: emailPass,
-            },
+        const { data, error } = await resend.emails.send({
+            from: 'ShopNest <onboarding@resend.dev>',
+            to: [to],
+            subject: subject,
+            text: text,
         });
 
-        const mailOptions = {
-            from: emailUser,
-            to,
-            subject,
-            text,
-        };
+        if (error) {
+            console.error('Resend API Error (Are you sending to your verified email?):', error);
+            return;
+        }
 
-        await transporter.sendMail(mailOptions);
-        console.log('Email sent successfully');
+        console.log('Email sent successfully via Resend API! ID:', data.id);
     } catch (error) {
-        console.error('Error sending email:', error);
+        console.error('Critical Error sending email via Resend:', error);
     }
 };
 
