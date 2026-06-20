@@ -22,9 +22,6 @@ const Login = () => {
       if (res.ok) {
         login(data);
         navigate('/');
-      } else if (res.status === 401 && data.requiresOtp) {
-        alert(data.message);
-        navigate('/register', { state: { email, requiresOtp: true } });
       } else {
         alert(data.message);
       }
