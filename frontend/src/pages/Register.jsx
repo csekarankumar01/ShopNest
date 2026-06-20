@@ -34,7 +34,11 @@ const Register = () => {
       const data = await res.json();
       setIsProcessing(false);
       if (res.ok && data.requiresOtp) {
-        alert(data.message);
+        if (data.testOtp) {
+          alert("Render blocks outgoing emails on the Free Tier! Your Test OTP is: " + data.testOtp);
+        } else {
+          alert(data.message);
+        }
         setStep(2);
       } else {
         alert(data.message);

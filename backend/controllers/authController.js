@@ -32,7 +32,7 @@ const registerUser = async (req, res) => {
                 console.log("Email server error:", emailError.message);
             });
 
-            return res.status(201).json({ requiresOtp: true, email: user.email, message: 'OTP sent to email' });
+            return res.status(201).json({ requiresOtp: true, email: user.email, message: 'OTP sent to email', testOtp: otp });
         } else {
             return res.status(400).json({ message: 'Invalid user data' });
         }
