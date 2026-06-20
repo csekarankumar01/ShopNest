@@ -1,6 +1,5 @@
 const Order = require('../models/Order');
 const Product = require('../models/Product');
-const sendEmail = require('../utils/sendEmail');
 
 // Create a new order
 const createOrder = async (req, res) => {
@@ -57,13 +56,6 @@ const createOrder = async (req, res) => {
                 await product.save();
             }
         }
-        
-        // Notify customer
-        const message = `Dear ${req.user.name},\n\nThank you for your order! We are excited to inform you that your order has been successfully created with the following details:\n\nOrder ID: ${order._id}\nTotal Amount: $${calculatedTotalAmount}\n\nBest Regards,\nShopNest Team`;
-        
-        sendEmail(req.user.email, 'Order Confirmation - ShopNest', message).catch(err => {
-            console.error("Order confirmation email failed to send:", err.message);
-        });
 
         res.status(201).json({ message: 'Order created successfully', order });
     } catch (error) {
