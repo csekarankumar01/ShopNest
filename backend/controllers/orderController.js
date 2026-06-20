@@ -1,4 +1,5 @@
 const Order = require('../models/Order');
+const Product = require('../models/Product');
 const sendEmail = require('../utils/sendEmail');
 
 // Create a new order
@@ -51,6 +52,15 @@ const createOrder = async (req, res) => {
         });
         
         await order.save();
+
+        // Update product stock
+        for (const item of formattedProducts) {
+            const product = await Product.findById(item.product);
+            if (product) {
+                product.stock = Math.max(0, product.stock - item.quantity);
+                await product.save();
+            }
+        }
         
         const message = `Dear ${req.user.name},\n\nThank you for your order! We are excited to inform you that your order has been successfully created with the following details:\n\nOrder ID: ${order._id}\nTotal Amount: $${calculatedTotalAmount}\n\nBest Regards,\nShopNest Team`;
         
