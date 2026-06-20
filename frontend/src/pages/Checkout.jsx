@@ -126,7 +126,7 @@ const Checkout = () => {
 
               if (saveOrderRes.ok) {
                 dispatch(clearCart());
-                navigate('/ordersuccess');
+                window.location.href = '/ordersuccess';
               } else {
                 setIsProcessing(false);
                 alert('Order saving failed');
@@ -188,7 +188,7 @@ const Checkout = () => {
       });
       if (saveOrderRes.ok) {
         dispatch(clearCart());
-        navigate('/ordersuccess');
+        window.location.href = '/ordersuccess';
       } else {
         setIsProcessing(false);
         alert('Order saving failed');
