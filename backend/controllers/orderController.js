@@ -11,34 +11,30 @@ const createOrder = async (req, res) => {
             return res.status(400).json({ message: 'Invalid order data' });
         }
 
-        // Necessary Change: Dynamic loop calculation that fixes the 'qty' to 'quantity' schema mapping
+        // Calculate total amount and map request items to the Order schema
         let calculatedTotalAmount = 0;
         const formattedProducts = items.map(item => {
             const price = Number(item.price || 0);
-            // Fallback check to safely capture either 'quantity' or 'qty' from request
             const quantity = Number(item.quantity || item.qty || 1); 
             
             calculatedTotalAmount += price * quantity;
 
             return {
                 product: item.product,
-                quantity: quantity, // Maps securely to your schema's required 'quantity' path
+                quantity: quantity,
                 price: price
             };
         });
 
-        // Necessary Change: Safely handle both flat string and nested object address structures
-        let finalAddress = {};
-        if (typeof address === 'object') {
-            finalAddress = address;
-        } else if (typeof address === 'string') {
-            // Parses a comma-separated string back into schema validation properties if needed
+        // Parse stringified address object if needed
+        let finalAddress = typeof address === 'object' ? address : {};
+        if (typeof address === 'string') {
             const parts = address.split(',').map(p => p.trim());
             finalAddress = {
                 fullName: req.user?.name || "Customer",
-                street: parts[0] || "Street Details Missing",
-                city: parts[1] || "City Missing",
-                state: parts[2] || "State Missing",
+                street: parts[0] || "",
+                city: parts[1] || "",
+                state: parts[2] || "",
                 country: parts[3] || "India"
             };
         }
@@ -47,13 +43,13 @@ const createOrder = async (req, res) => {
             user: req.user._id,
             products: formattedProducts,
             totalAmount: calculatedTotalAmount,
-            address: finalAddress, // Saves as a valid sub-document object matching your schema
+            address: finalAddress,
             paymentId,
         });
         
         await order.save();
 
-        // Update product stock
+        // Deduct ordered items from product stock
         for (const item of formattedProducts) {
             const product = await Product.findById(item.product);
             if (product) {
@@ -62,15 +58,16 @@ const createOrder = async (req, res) => {
             }
         }
         
+        // Notify customer
         const message = `Dear ${req.user.name},\n\nThank you for your order! We are excited to inform you that your order has been successfully created with the following details:\n\nOrder ID: ${order._id}\nTotal Amount: $${calculatedTotalAmount}\n\nBest Regards,\nShopNest Team`;
         
-        // Send email asynchronously in the background to prevent blocking the response
-        sendEmail(req.user.email, 'Order Created', message).catch(err => {
-            console.error("Email service error:", err);
+        sendEmail(req.user.email, 'Order Confirmation - ShopNest', message).catch(err => {
+            console.error("Order confirmation email failed to send:", err.message);
         });
 
         res.status(201).json({ message: 'Order created successfully', order });
     } catch (error) {
+        console.error("Create order error:", error);
         res.status(500).json({ message: 'Error creating order', error: error.message });
     }
 };

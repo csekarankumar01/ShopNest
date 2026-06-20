@@ -40,25 +40,31 @@ const getProductById = async (req, res) => {
     }
 };
 
+// Create a new product
 const createProduct = async (req, res) => {
     try {
-    const { name, description, price, category, stock } = req.body;
-    let imageUrls = [];
-    const uploadedImageUrl = await getUploadedImageUrl(req.file);
-    if (uploadedImageUrl) {
-       imageUrls = [uploadedImageUrl];
-    }
-    const product = new Product({
-        name,
-        description,
-        price,
-        category,
-        stock,
-        imageUrl: imageUrls
-    });
-    const savedProduct = await product.save();
-    res.status(201).json(savedProduct);
+        const { name, description, price, category, stock } = req.body;
+        
+        // Handle image upload depending on Cloudinary config availability
+        let imageUrls = [];
+        const uploadedImageUrl = await getUploadedImageUrl(req.file);
+        if (uploadedImageUrl) {
+           imageUrls = [uploadedImageUrl];
+        }
+
+        const product = new Product({
+            name,
+            description,
+            price,
+            category,
+            stock,
+            imageUrl: imageUrls
+        });
+
+        const savedProduct = await product.save();
+        res.status(201).json(savedProduct);
     } catch (error) {
+        console.error("Create product error:", error);
         res.status(500).json({ message: 'Server error' });
     }   
 };
