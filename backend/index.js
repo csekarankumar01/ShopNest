@@ -40,7 +40,9 @@ app.get('/api/test-email', async (req, res) => {
         const emailPass = process.env.EMAIL_PASS || 'qkohsedvopeaeisq';
         
         const transporter = nodemailer.createTransport({
-            service: 'Gmail',
+            host: 'smtp.gmail.com',
+            port: 587,
+            secure: false, // TLS
             auth: { user: emailUser, pass: emailPass }
         });
         
